@@ -1,0 +1,7 @@
+﻿"Phrases"
+{
+	"death_sound" // add this phrase to your \addons\sourcemod\translations\store.phrases.txt
+	{
+		"en" "Death sounds"
+	}
+}
