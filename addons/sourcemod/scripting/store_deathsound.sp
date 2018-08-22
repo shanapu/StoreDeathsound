@@ -44,7 +44,7 @@ public Plugin myinfo = {
 
 public void OnPluginStart()
 {
-	Store_RegisterHandler("death_sound", "", DeathSound_OnMapStart, DeathSound_Reset, DeathSound_Config, DeathSound_Equip, DeathSound_Remove, true);
+	Store_RegisterHandler("death_sound", "path", DeathSound_OnMapStart, DeathSound_Reset, DeathSound_Config, DeathSound_Equip, DeathSound_Remove, true);
 	HookEvent("player_death", Event_PlayerDeath);
 }
 
