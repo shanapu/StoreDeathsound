@@ -32,6 +32,7 @@ char g_sSounds[STORE_MAX_ITEMS][PLATFORM_MAX_PATH];
 int g_iCount = 0;
 int g_iSound[MAXPLAYERS+1];
 int g_iOrigin[STORE_MAX_ITEMS];
+bool g_bBlockOrignal[STORE_MAX_ITEMS];
 float g_fVolume[STORE_MAX_ITEMS];
 
 public Plugin myinfo = {
@@ -46,6 +47,7 @@ public void OnPluginStart()
 {
 	Store_RegisterHandler("death_sound", "", DeathSound_OnMapStart, DeathSound_Reset, DeathSound_Config, DeathSound_Equip, DeathSound_Remove, true);
 	HookEvent("player_death", Event_PlayerDeath);
+	AddNormalSoundHook(Hook_NormalSound);
 }
 
 public void DeathSound_OnMapStart()
@@ -55,7 +57,7 @@ public void DeathSound_OnMapStart()
 	for (int i = 0; i < g_iCount; ++i)
 	{
 		PrecacheSound(g_sSounds[i]);
-		Format(sBuffer, sizeof(sBuffer), "sound/%s", g_sSounds[i]);
+		FormatEx(sBuffer, sizeof(sBuffer), "sound/%s", g_sSounds[i]);
 		AddFileToDownloadsTable(sBuffer);
 	}
 }
@@ -72,6 +74,7 @@ public bool DeathSound_Config(Handle &kv, int itemid)
 	KvGetString(kv, "path", g_sSounds[g_iCount], PLATFORM_MAX_PATH);
 	g_iOrigin[g_iCount] = KvGetNum(kv, "origin", 1);
 	g_fVolume[g_iCount] = KvGetFloat(kv, "volume", 1.0);
+	g_bBlockOrignal[g_iCount] = view_as<bool>(KvGetNum(kv, "block", 1));
 
 	if (!FileExists(g_sSounds[g_iCount], true))
 		return false;
@@ -107,14 +110,42 @@ public void Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcas
 	if (client == attacker)
 		return;
 
-	if (g_iOrigin[g_iSound[client]] == 1)
+	switch (g_iOrigin[g_iSound[client]])
 	{
-		EmitSoundToAll(g_sSounds[g_iSound[client]], SOUND_FROM_WORLD, _, SNDLEVEL_RAIDSIREN, _, g_fVolume[g_iSound[client]]);
+		// Sound From global world
+		case 1:
+		{
+			EmitSoundToAll(g_sSounds[g_iSound[client]], SOUND_FROM_WORLD, _, SNDLEVEL_RAIDSIREN, _, g_fVolume[g_iSound[client]]);
+		}
+		// Sound From local player
+		case 2:
+		{
+			float fVec[3];
+			GetClientAbsOrigin(client, fVec);
+			EmitAmbientSound(g_sSounds[g_iSound[client]], fVec, SOUND_FROM_PLAYER, SNDLEVEL_RAIDSIREN, _, g_fVolume[g_iSound[client]]);
+		}
+		// Sound From player voice
+		case 3:
+		{
+			float fPos[3], fAgl[3];
+			GetClientEyePosition(client, fPos);
+			GetClientEyeAngles(client, fAgl);
+
+			// player`s mouth
+			fPos[2] -= 3.0;
+
+			EmitSoundToAll(g_sSounds[g_iSound[client]], client, SNDCHAN_VOICE, SNDLEVEL_NORMAL, SND_NOFLAGS, g_fVolume[g_iSound[client]], SNDPITCH_NORMAL, client, fPos, fAgl, true);
+		}
 	}
-	else
-	{
-		float fVec[3];
-		GetClientAbsOrigin(client, fVec);
-		EmitAmbientSound(g_sSounds[g_iSound[client]], fVec, SOUND_FROM_PLAYER, SNDLEVEL_RAIDSIREN, _, g_fVolume[g_iSound[client]]);
-	}
+}
+
+public Action Hook_NormalSound(int clients[64], int &numClients, char sample[PLATFORM_MAX_PATH], int &client, int &channel, float &volume, int &level, int &pitch, int &flags)
+{
+    if (channel != SNDCHAN_VOICE || client > MaxClients || client < 1 || !IsClientInGame(client) || sample[0] != '~' || !g_bItem[client])
+        return Plugin_Continue;
+
+    if (g_bBlockOrignal[g_iSound[client]] && StrContains(sample, "~player/death", false) == 0)
+        return Plugin_Handled;
+
+    return Plugin_Continue;
 }

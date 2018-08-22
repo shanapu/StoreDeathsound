@@ -17,25 +17,28 @@ add something like this to your `.\addons\sourcemod\configs\store\items.txt`
 		"Tribute"
 		{
 			"path" "hg/cannon.mp3"
-			"origin" "1"  // 1 - global (map)/ 2 - local (player)
+			"origin" "1"  // 1 - global (map)/ 2 - local (player)/ 3 - player voice
 			"volume" "1.0"
 			"price" "100"
+			"block" "1"   // 1 - block orignal death voice
 			"type" "death_sound"
 		}
 		"I'm dying!"
 		{
 			"path" "player/dying.mp3"
-			"origin" "2"  // 1 - global / 2 - local
+			"origin" "2"  // 1 - global / 2 - local / 3 - player voice
 			"volume" "0.5"
 			"price" "100"
+			"block" "0"   // 1 - block orignal death voice
 			"type" "death_sound"
 		}
 		"Argh"
 		{
 			"path" "player/argh.mp3"
-			"origin" "2"  // 1 - global / 2 - local
+			"origin" "2"  // 1 - global / 2 - local / 3 - player voice
 			"volume" "1.0"
 			"price" "100"
+			"block" "1"   // 1 - block orignal death voice
 			"type" "death_sound"
 		}
 	}
