@@ -4,6 +4,7 @@
  * https://github.com/shanapu/StoreDeathsound
  * 
  * Copyright (C) 2018 Thomas Schmidt (shanapu)
+ * Contributer: good-live, Kxnrl
  *
  * This program is free software; you can redistribute it and/or modify it under
  * the terms of the GNU General Public License, version 3.0, as published by the
@@ -39,13 +40,13 @@ public Plugin myinfo = {
 	name = "Death sound for Zephyrus Store",
 	author = "shanapu",
 	description = "Adds support for death sounds to Zephyrus Store plugin",
-	version = "1.0",
+	version = "1.1",
 	url = "https://github.com/shanapu/StoreDeathsound"
 };
 
 public void OnPluginStart()
 {
-	Store_RegisterHandler("death_sound", "", DeathSound_OnMapStart, DeathSound_Reset, DeathSound_Config, DeathSound_Equip, DeathSound_Remove, true);
+	Store_RegisterHandler("death_sound", "path", DeathSound_OnMapStart, DeathSound_Reset, DeathSound_Config, DeathSound_Equip, DeathSound_Remove, true);
 	HookEvent("player_death", Event_PlayerDeath);
 	AddNormalSoundHook(Hook_NormalSound);
 }
