@@ -77,7 +77,9 @@ public bool DeathSound_Config(Handle &kv, int itemid)
 	g_fVolume[g_iCount] = KvGetFloat(kv, "volume", 1.0);
 	g_bBlockOrignal[g_iCount] = view_as<bool>(KvGetNum(kv, "block", 1));
 
-	if (!FileExists(g_sSounds[g_iCount], true))
+	char sBuffer[256];
+	FormatEx(sBuffer, sizeof(sBuffer), "sound/%s", g_sSounds[g_iCount]);
+	if (!FileExists(sBuffer, true))
 		return false;
 
 	g_iCount++;
