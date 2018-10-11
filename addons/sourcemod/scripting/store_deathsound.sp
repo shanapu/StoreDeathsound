@@ -40,7 +40,7 @@ public Plugin myinfo = {
 	name = "Death sound for Zephyrus Store",
 	author = "shanapu",
 	description = "Adds support for death sounds to Zephyrus Store plugin",
-	version = "1.1",
+	version = "1.2",
 	url = "https://github.com/shanapu/StoreDeathsound"
 };
 
