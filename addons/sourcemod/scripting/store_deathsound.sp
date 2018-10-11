@@ -92,7 +92,7 @@ public int DeathSound_Equip(int client, int id)
 	g_iSound[client] = Store_GetDataIndex(id);
 	g_bItem[client] = true;
 
-	return 0;
+	return -1;
 }
 
 public int DeathSound_Remove(int client)
