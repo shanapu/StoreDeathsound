@@ -40,7 +40,7 @@ public Plugin myinfo = {
 	name = "Death sound for Zephyrus Store",
 	author = "shanapu",
 	description = "Adds support for death sounds to Zephyrus Store plugin",
-	version = "1.2",
+	version = "1.3",
 	url = "https://github.com/shanapu/StoreDeathsound"
 };
 
@@ -102,6 +102,12 @@ public int DeathSound_Remove(int client)
 	return 0;
 }
 
+public void OnClientDisconnect(int client)
+{
+	g_iSound[client] = -1;
+	g_bItem[client] = false;
+}
+
 public void Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcast)
 {
 	int client = GetClientOfUserId(GetEventInt(event, "userid"));
@@ -144,11 +150,12 @@ public void Event_PlayerDeath(Handle event, const char[] name, bool dontBroadcas
 
 public Action Hook_NormalSound(int clients[64], int &numClients, char sample[PLATFORM_MAX_PATH], int &client, int &channel, float &volume, int &level, int &pitch, int &flags)
 {
-    if (channel != SNDCHAN_VOICE || client > MaxClients || client < 1 || !IsClientInGame(client) || sample[0] != '~' || !g_bItem[client])
-        return Plugin_Continue;
+	if (channel != SNDCHAN_VOICE || client > MaxClients || client < 1 || !IsClientInGame(client) || sample[0] != '~' || !g_bItem[client])
+		return Plugin_Continue;
 
-    if (g_bBlockOrignal[g_iSound[client]] && StrContains(sample, "~player/death", false) == 0)
-        return Plugin_Handled;
+	if (g_bBlockOrignal[g_iSound[client]] && StrContains(sample, "~player/death", false) == 0)
+		return Plugin_Handled;
 
-    return Plugin_Continue;
+	return Plugin_Continue;
 }
+
